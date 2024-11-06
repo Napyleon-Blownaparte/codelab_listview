@@ -7,14 +7,17 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import android.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import c14220281.paba.codelablistview.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -30,6 +33,8 @@ class MainActivity : AppCompatActivity() {
             data
         )
 
+        binding.lv1.adapter = lvAdapter
+
         val _lv1 = findViewById<ListView>(R.id.lv1)
         _lv1.adapter = lvAdapter
 
@@ -39,7 +44,6 @@ class MainActivity : AppCompatActivity() {
             data.add(dtAkhir.toString())
             lvAdapter.notifyDataSetChanged()
         }
-
 
         _lv1.setOnItemClickListener {
             parent, view, position, id ->
@@ -51,5 +55,19 @@ class MainActivity : AppCompatActivity() {
             data.removeFirst()
             lvAdapter.notifyDataSetChanged()
         }
+
+        binding.sv1.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                lvAdapter.filter.filter(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                lvAdapter.filter.filter(newText)
+                return false
+            }
+        })
+
+
     }
 }
